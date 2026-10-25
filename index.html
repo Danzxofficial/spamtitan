@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTP TITAN×RAT</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Comic Sans MS','Trebuchet MS',sans-serif; }
+  body {
+    background: linear-gradient(135deg,#2b1e00,#4a3500,#6b4f00);
+    min-height:100vh; color:#1a1200; overflow-x:hidden;
+  }
+  /* ==== KOMIK 3D KUNING THEME ==== */
+  .comic-box {
+    background:#ffd700;
+    border:5px solid #111;
+    border-radius:18px;
+    box-shadow: 8px 8px 0 #111, inset 0 0 0 3px #fff8b0;
+    padding:20px;
+  }
+  .comic-title {
+    font-size:2em; font-weight:900; text-align:center;
+    color:#111; text-shadow:3px 3px 0 #fff,6px 6px 0 #ffaa00;
+    letter-spacing:2px; transform:rotate(-2deg);
+  }
+  .btn {
+    background:#ffb300; border:4px solid #111; border-radius:12px;
+    padding:12px 20px; font-weight:900; font-size:1em;
+    box-shadow:4px 4px 0 #111; cursor:pointer; color:#111;
+    transition:.1s; text-transform:uppercase;
+  }
+  .btn:active { transform:translate(4px,4px); box-shadow:0 0 0 #111; }
+  .btn-red { background:#ff3b3b; color:#fff; }
+  .btn-green { background:#3bff6e; }
+  input, select {
+    width:100%; padding:12px; border:4px solid #111; border-radius:10px;
+    font-size:1em; font-weight:700; background:#fff8b0; color:#111;
+    box-shadow:inset 3px 3px 0 #d4b800;
+  }
+  label { font-weight:900; display:block; margin:10px 0 5px; color:#111; }
+  .hidden { display:none !important; }
+
+  /* ===== AUTH SCREEN ===== */
+  #authScreen {
+    max-width:420px; margin:40px auto; position:relative;
+  }
+  .logo-badge {
+    width:110px; height:110px; margin:0 auto 15px;
+    background:radial-gradient(circle,#fff200,#ffaa00 60%,#111 62%);
+    border:5px solid #111; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.2em; font-weight:900; color:#111;
+    box-shadow:6px 6px 0 #111, inset 0 0 20px #fff;
+    text-shadow:2px 2px 0 #fff;
+  }
+  .tabs { display:flex; gap:10px; margin-bottom:15px; }
+  .tabs .btn { flex:1; }
+  .tab-active { background:#3bff6e !important; }
+  .err { color:#ff0000; font-weight:900; text-align:center; margin-top:10px; font-size:.9em; }
+
+  /* ===== DASHBOARD ===== */
+  #dashboard { max-width:480px; margin:20px auto; padding:0 10px 60px; }
+  .topbar {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:15px;
+  }
+  .topbar h1 { font-size:1.4em; color:#ffd700; text-shadow:3px 3px 0 #111; }
+  .account-card { text-align:center; margin-bottom:20px; }
+  .account-card .name { font-size:1.6em; font-weight:900; color:#111; }
+  .account-card .exp {
+    display:inline-block; margin-top:8px; padding:6px 14px;
+    background:#111; color:#ffd700; border-radius:20px;
+    font-weight:900; font-size:.9em;
+  }
+  .section-title {
+    text-align:center; font-weight:900; font-size:1.2em;
+    color:#ffd700; text-shadow:2px 2px 0 #111; margin:25px 0 12px;
+  }
+  .tool-card {
+    display:flex; align-items:center; gap:15px;
+    cursor:pointer; margin-bottom:15px;
+  }
+  .tool-card .icon { font-size:2.2em; }
+  .tool-card .info h3 { font-size:1.1em; color:#111; }
+  .tool-card .info p { font-size:.8em; color:#5a4400; font-weight:700; }
+
+  /* ===== SPAM OTP PAGE ===== */
+  .page { max-width:480px; margin:20px auto; padding:0 10px 60px; }
+  .back-btn { position:absolute; top:15px; right:15px; padding:8px 14px; font-size:.85em; }
+  .page-wrap { position:relative; }
+  .phone-row {
+    display:flex; gap:8px; align-items:stretch; margin-bottom:10px;
+  }
+  .phone-row select { flex:1.4; }
+  .phone-row input { flex:2; }
+  #attackBtn {
+    width:100%; padding:16px; font-size:1.2em; margin-top:15px;
+    background:#ff3b3b; color:#fff; border:4px solid #111;
+  }
+  .log-box {
+    margin-top:15px; background:#111; color:#3bff6e;
+    border-radius:10px; padding:12px; font-family:monospace;
+    font-size:.85em; max-height:150px; overflow-y:auto;
+    display:none;
+  }
+
+  /* ===== RAT PAGE ===== */
+  .flash-opt {
+    display:flex; align-items:center; justify-content:space-between;
+    background:#fff8b0; border:3px solid #111; border-radius:10px;
+    padding:12px; margin-bottom:10px; font-weight:900; cursor:pointer;
+  }
+  .flash-opt.selected { background:#3bff6e; box-shadow:4px 4px 0 #111; }
+  .flash-opt .dot {
+    width:22px; height:22px; border:3px solid #111; border-radius:50%;
+    background:#fff;
+  }
+  .flash-opt.selected .dot { background:#111; }
+  .big-flash-btn {
+    width:100%; padding:20px; font-size:1.3em; margin-top:15px;
+    background:#111; color:#ffd700; border:4px solid #ffd700;
+  }
+  .perm-note {
+    font-size:.75em; background:#111; color:#ffd700;
+    padding:8px; border-radius:8px; margin-top:12px; text-align:center;
+    font-weight:700;
+  }
+  .flash-indicator {
+    width:80px; height:80px; margin:20px auto; border-radius:50%;
+    border:5px solid #111; background:#444; transition:.1s;
+  }
+  .flash-indicator.on { background:#fff200; box-shadow:0 0 40px #fff200; }
+</style>
+</head>
+<body>
+
+<!-- ================= AUTH SCREEN ================= -->
+<div id="authScreen" class="comic-box">
+  <div class="logo-badge">OTP</div>
+  <div class="comic-title">OTP TITAN×RAT</div>
+
+  <div class="tabs" style="margin-top:18px;">
+    <button class="btn tab-active" id="tabLogin">LOGIN</button>
+    <button class="btn" id="tabRegister">DAFTAR</button>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <div id="loginForm">
+    <label>USERNAME</label>
+    <input type="text" id="loginUser" placeholder="Masukkan username">
+    <label>PASSWORD</label>
+    <input type="password" id="loginPass" placeholder="Masukkan password">
+    <button class="btn btn-green" style="width:100%;margin-top:18px;" id="doLogin">MASUK</button>
+    <div class="err" id="loginErr"></div>
+  </div>
+
+  <!-- REGISTER FORM -->
+  <div id="registerForm" class="hidden">
+    <label>USERNAME BARU</label>
+    <input type="text" id="regUser" placeholder="Username baru">
+    <label>PASSWORD</label>
+    <input type="password" id="regPass" placeholder="Password">
+    <button class="btn" style="width:100%;margin-top:18px;background:#ffb300;" id="doRegister">DAFTAR SEKARANG</button>
+    <div class="err" id="regErr"></div>
+  </div>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<div id="dashboard" class="hidden">
+  <div class="topbar">
+    <h1>⚡ DASHBOARD</h1>
+    <button class="btn btn-red" style="padding:8px 14px;font-size:.85em;" id="logoutBtn">LOGOUT</button>
+  </div>
+
+  <div class="comic-box account-card">
+    <div class="name" id="accName">-</div>
+    <div class="exp">EXPIRED: <span id="accExp">-</span></div>
+  </div>
+
+  <div class="section-title">🛠 TOOLS 🛠</div>
+
+  <div class="comic-box tool-card" id="toolSpam">
+    <div class="icon">📱💥</div>
+    <div class="info">
+      <h3>SPAM OTP</h3>
+      <p>Kirim OTP massal ke nomor target</p>
+    </div>
+  </div>
+
+  <div class="comic-box tool-card" id="toolRat">
+    <div class="icon">🐀🔦</div>
+    <div class="info">
+      <h3>RAT ACCESS TROJAN</h3>
+      <p>Kontrol senter device target</p>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SPAM OTP PAGE ================= -->
+<div id="spamPage" class="page page-wrap hidden">
+  <button class="btn back-btn" id="backFromSpam">⬅ BACK</button>
+  <div class="comic-box" style="margin-top:50px;">
+    <div class="comic-title" style="font-size:1.5em;">📱 SPAM OTP</div>
+
+    <label style="margin-top:18px;">NEGARA</label>
+    <div class="phone-row">
+      <select id="countryCode">
+        <option value="+62" data-logo="🇮🇩">🇮🇩 +62 Indonesia</option>
+        <option value="+1" data-logo="🇺🇸">🇺🇸 +1 USA</option>
+        <option value="+44" data-logo="🇬🇧">🇬🇧 +44 UK</option>
+        <option value="+91" data-logo="🇮🇳">🇮🇳 +91 India</option>
+        <option value="+60" data-logo="🇲🇾">🇲🇾 +60 Malaysia</option>
+        <option value="+65" data-logo="🇸🇬">🇸🇬 +65 Singapore</option>
+        <option value="+66" data-logo="🇹🇭">🇹🇭 +66 Thailand</option>
+        <option value="+84" data-logo="🇻🇳">🇻🇳 +84 Vietnam</option>
+        <option value="+63" data-logo="🇵🇭">🇵🇭 +63 Philippines</option>
+        <option value="+81" data-logo="🇯🇵">🇯?? +81 Japan</option>
+        <option value="+82" data-logo="🇰🇷">🇰🇷 +82 South Korea</option>
+        <option value="+86" data-logo="🇨🇳">🇨🇳 +86 China</option>
+        <option value="+61" data-logo="🇦🇺">🇦🇺 +61 Australia</option>
+        <option value="+49" data-logo="🇩🇪">🇩🇪 +49 Germany</option>
+        <option value="+33" data-logo="🇫🇷">🇫🇷 +33 France</option>
+        <option value="+39" data-logo="🇮🇹">🇮🇹 +39 Italy</option>
+        <option value="+34" data-logo="🇪🇸">🇪🇸 +34 Spain</option>
+        <option value="+55" data-logo="🇧🇷">🇧🇷 +55 Brazil</option>
+        <option value="+52" data-logo="🇲🇽">🇲🇽 +52 Mexico</option>
+        <option value="+7" data-logo="🇷🇺">🇷🇺 +7 Russia</option>
+        <option value="+90" data-logo="🇹🇷">🇹🇷 +90 Turkey</option>
+        <option value="+20" data-logo="🇪🇬">🇪🇬 +20 Egypt</option>
+        <option value="+27" data-logo="🇿🇦">🇿🇦 +27 South Africa</option>
+        <option value="+234" data-logo="🇳🇬">🇳🇬 +234 Nigeria</option>
+        <option value="+971" data-logo="🇦🇪">🇦🇪 +971 UAE</option>
+        <option value="+966" data-logo="🇸🇦">🇸🇦 +966 Saudi</option>
+        <option value="+92" data-logo="🇵🇰">🇵🇰 +92 Pakistan</option>
+        <option value="+880" data-logo="🇧🇩">🇧🇩 +880 Bangladesh</option>
+        <option value="+31" data-logo="🇳🇱">🇳🇱 +31 Netherlands</option>
+        <option value="+46" data-logo="🇸🇪">🇸🇪 +46 Sweden</option>
+        <option value="+47" data-logo="🇳🇴">🇳🇴 +47 Norway</option>
+        <option value="+45" data-logo="🇩🇰">🇩🇰 +45 Denmark</option>
+        <option value="+48" data-logo="🇵🇱">🇵🇱 +48 Poland</option>
+        <option value="+380" data-logo="🇺🇦">🇺🇦 +380 Ukraine</option>
+        <option value="+972" data-logo="🇮🇱">🇮🇱 +972 Israel</option>
+        <option value="+98" data-logo="🇮🇷">🇮🇷 +98 Iran</option>
+        <option value="+964" data-logo="🇮🇶">🇮🇶 +964 Iraq</option>
+      </select>
+      <input type="tel" id="targetNumber" placeholder="Nomor target (tanpa 0)">
+    </div>
+
+    <button class="btn" id="attackBtn">💥 ATTACK 💥</button>
+    <div class="log-box" id="logBox"></div>
+  </div>
+</div>
+
+<!-- ================= RAT PAGE ================= -->
+<div id="ratPage" class="page page-wrap hidden">
+  <button class="btn back-btn" id="backFromRat">⬅ BACK</button>
+  <div class="comic-box" style="margin-top:50px;">
+    <div class="comic-title" style="font-size:1.5em;">🐀 RAT ACCESS</div>
+    <p style="text-align:center;font-weight:900;margin-top:10px;color:#111;">🔦 FLASH CONTROL</p>
+
+    <div style="margin-top:15px;">
+      <div class="flash-opt" data-mode="on">
+        <span>NYALA BIASA</span><div class="dot"></div>
+      </div>
+      <div class="flash-opt" data-mode="slow">
+        <span>KEDIP PELAN</span><div class="dot"></div>
+      </div>
+      <div class="flash-opt" data-mode="medium">
+        <span>KEDIP SEDANG</span><div class="dot"></div>
+      </div>
+      <div class="flash-opt" data-mode="fast">
+        <span>KEDIP CEPAT</span><div class="dot"></div>
+      </div>
+    </div>
+
+    <div class="flash-indicator" id="flashIndicator"></div>
+
+    <button class="btn big-flash-btn" id="flashToggle">🔦 TURN ON</button>
+
+    <div class="perm-note">⚠ IZIN KAMERA AKAN DIMINTA SAAT SENTER DIAKTIFKAN (buat akses torch device)</div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   STATE & STORAGE
+============================================================ */
+const LS_USERS = 'otp_titan_users';
+const LS_SESSION = 'otp_titan_session';
+
+// Akun master (jangan disebar)
+const MASTER_ACCOUNT = { username:'azam', password:'123', exp:'9999-99-9', master:true };
+
+function getUsers() {
+  let raw = localStorage.getItem(LS_USERS);
+  let users = raw ? JSON.parse(raw) : [];
+  // pastikan akun master selalu ada
+  if(!users.find(u => u.username === MASTER_ACCOUNT.username)){
+    users.push({...MASTER_ACCOUNT});
+    localStorage.setItem(LS_USERS, JSON.stringify(users));
+  }
+  return users;
+}
+function saveUsers(users){ localStorage.setItem(LS_USERS, JSON.stringify(users)); }
+function todayStr(){ 
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+/* ============================================================
+   AUTH UI LOGIC
+============================================================ */
+const authScreen = document.getElementById('authScreen');
+const dashboard  = document.getElementById('dashboard');
+const spamPage   = document.getElementById('spamPage');
+const ratPage    = document.getElementById('ratPage');
+
+const tabLogin = document.getElementById('tabLogin');
+const tabRegister = document.getElementById('tabRegister');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+
+tabLogin.onclick = () => {
+  tabLogin.classList.add('tab-active'); tabRegister.classList.remove('tab-active');
+  loginForm.classList.remove('hidden'); registerForm.classList.add('hidden');
+};
+tabRegister.onclick = () => {
+  tabRegister.classList.add('tab-active'); tabLogin.classList.remove('tab-active');
+  registerForm.classList.remove('hidden'); loginForm.classList.add('hidden');
+};
+
+// LOGIN
+document.getElementById('doLogin').onclick = () => {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginErr');
+  err.textContent = '';
+
+  const users = getUsers();
+  const found = users.find(x => x.username === u && x.password === p);
+  if(!found){ err.textContent = '❌ USERNAME / PASSWORD SALAH OON!'; return; }
+
+  // cek expired
+  if(found.exp !== MASTER_ACCOUNT.exp){
+    if(todayStr() > found.exp){
+      err.textContent = '❌ AKUN SUDAH EXPIRED!';
+      return;
+    }
+  }
+
+  localStorage.setItem(LS_SESSION, JSON.stringify({username:found.username, exp:found.exp, master:!!found.master}));
+  enterDashboard(found);
+};
+
+// REGISTER
+document.getElementById('doRegister').onclick = () => {
+  const u = document.getElementById('regUser').value.trim();
+  const p = document.getElementById('regPass').value;
+  const err = document.getElementById('regErr');
+  err.textContent = '';
+
+  if(!u || !p){ err.textContent = '❌ ISI SEMUA FIELD OON!'; return; }
+  if(u.length < 3){ err.textContent = '❌ USERNAME MINIMAL 3 HURUF!'; return; }
+
+  const users = getUsers();
+  if(users.find(x => x.username === u)){ err.textContent = '❌ USERNAME SUDAH DIPAKAI!'; return; }
+
+  const newUser = { username:u, password:p, exp:'2027-01-1', master:false };
+  users.push(newUser);
+  saveUsers(users);
+
+  alert('✅ DAFTAR BERHASIL! EXPIRED AKUN BARU LU: 2027-01-1\nSilakan login.');
+  tabLogin.click();
+  document.getElementById('loginUser').value = u;
+};
+
+/* ============================================================
+   DASHBOARD
+============================================================ */
+function enterDashboard(acc){
+  authScreen.classList.add('hidden');
+  dashboard.classList.remove('hidden');
+  document.getElementById('accName').textContent = '👤 ' + acc.username;
+  document.getElementById('accExp').textContent = acc.exp;
+}
+
+document.getElementById('logoutBtn').onclick = () => {
+  localStorage.removeItem(LS_SESSION);
+  dashboard.classList.add('hidden');
+  spamPage.classList.add('hidden');
+  ratPage.classList.add('hidden');
+  authScreen.classList.remove('hidden');
+  document.getElementById('loginPass').value = '';
+};
+
+// auto login kalau ada session
+(function autoLogin(){
+  const s = localStorage.getItem(LS_SESSION);
+  if(s){
+    try {
+      const acc = JSON.parse(s);
+      if(acc.exp === MASTER_ACCOUNT.exp || todayStr() <= acc.exp){
+        enterDashboard(acc);
+      }
+    } catch(e){}
+  }
+})();
+
+/* ============================================================
+   NAVIGASI TOOLS
+============================================================ */
+document.getElementById('toolSpam').onclick = () => {
+  dashboard.classList.add('hidden'); spamPage.classList.remove('hidden');
+};
+document.getElementById('toolRat').onclick = () => {
+  dashboard.classList.add('hidden'); ratPage.classList.remove('hidden');
+};
+document.getElementById('backFromSpam').onclick = () => {
+  spamPage.classList.add('hidden'); dashboard.classList.remove('hidden');
+};
+document.getElementById('backFromRat').onclick = () => {
+  stopFlash();
+  ratPage.classList.add('hidden'); dashboard.classList.remove('hidden');
+};
+
+/* ============================================================
+   SPAM OTP (simulasi visual — sambungkan ke API backend lu)
+============================================================ */
+const logBox = document.getElementById('logBox');
+const attackBtn = document.getElementById('attackBtn');
+
+function addLog(msg){
+  logBox.style.display = 'block';
+  const line = document.createElement('div');
+  line.textContent = '> ' + msg;
+  logBox.appendChild(line);
+  logBox.scrollTop = logBox.scrollHeight;
+}
+
+attackBtn.onclick = () => {
+  const cc = document.getElementById('countryCode').value;
+  const num = document.getElementById('targetNumber').value.trim();
+  logBox.innerHTML = '';
+  if(!num){
+    addLog('❌ NOMOR TARGET KOSONG OON!');
+    return;
+  }
+  const full = cc + num;
+  addLog('INIT ATTACK → ' + full);
+  addLog('LOADING SMS GATEWAY POOL...');
+
+  // === SIMULASI KIRIM 20+ OTP ===
+  // Di backend asli: fetch('/api/send-otp', {target: full}) ke SMS gateway
+  let count = 0;
+  const total = 20 + Math.floor(Math.random()*5); // 20-24
+  const interval = setInterval(() => {
+    count++;
+    addLog('OTP #' + count + ' TERKIRIM KE ' + full + ' ✅');
+    if(count >= total){
+      clearInterval(interval);
+      addLog('🔥 ATTACK SELESAI — TOTAL ' + total + ' OTP TERKIRIM');
+    }
+  }, 350);
+};
+
+/* ============================================================
+   RAT / FLASH CONTROL (pakai MediaStream torch API)
+============================================================ */
+let flashMode = 'on';
+let flashInterval = null;
+let flashOn = false;
+let mediaStream = null;
+let videoTrack = null;
+const flashIndicator = document.getElementById('flashIndicator');
+const flashToggle = document.getElementById('flashToggle');
+
+// pilih mode
+document.querySelectorAll('.flash-opt').forEach(el => {
+  el.onclick = () => {
+    document.querySelectorAll('.flash-opt').forEach(x => x.classList.remove('selected'));
+    el.classList.add('selected');
+    flashMode = el.dataset.mode;
+  };
+});
+// default select pertama
+document.querySelector('.flash-opt[data-mode="on"]').classList.add('selected');
+
+function setTorch(on){
+  flashOn = on;
+  flashIndicator.classList.toggle('on', on);
+  if(videoTrack && videoTrack.getCapabilities && videoTrack.getCapabilities().torch){
+    videoTrack.applyConstraints({advanced:[{torch:on}]}).catch(()=>{});
+  }
+}
+
+async function initCamera(){
+  if(mediaStream) return true;
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    videoTrack = mediaStream.getVideoTracks()[0];
+    return true;
+  } catch(e){
+    return false;
+  }
+}
+
+function stopFlash(){
+  if(flashInterval) clearInterval(flashInterval);
+  flashInterval = null;
+  setTorch(false);
+  flashToggle.textContent = '🔦 TURN ON';
+}
+
+flashToggle.onclick = async () => {
+  if(flashOn || flashInterval){
+    stopFlash();
+    return;
+  }
+  const ok = await initCamera();
+  if(!ok){
+    alert('❌ IZIN KAMERA DITOLAK / TORCH GAK DIDUKUNG. AKTIFKAN IZIN KAMERA!');
+  }
+  flashToggle.textContent = '🔦 TURN OFF';
+
+  if(flashMode === 'on'){
+    setTorch(true);
+  } else {
+    let delay = 500; // pelan
+    if(flashMode === 'medium') delay = 250;
+    if(flashMode === 'fast') delay = 80;
+    flashInterval = setInterval(() => {
+      setTorch(!flashOn);
+    }, delay);
+  }
+};
+
+/* ============================================================
+   INIT
+============================================================ */
+getUsers(); // pastikan master account ada
+</script>
+</body>
+</html>
